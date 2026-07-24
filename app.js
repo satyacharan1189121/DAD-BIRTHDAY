@@ -268,8 +268,11 @@ function extinguishCandle(candle) {
 }
 
 function updateCandleStats() {
-    const textVal = `${CONFIG.candleCount - activeCandles}/${CONFIG.candleCount}`;
-    document.getElementById('candles-blown-count').innerText = textVal;
+    const statEl = document.getElementById('candles-blown-count');
+    if (statEl) {
+        const textVal = `${CONFIG.candleCount - activeCandles}/${CONFIG.candleCount}`;
+        statEl.innerText = textVal;
+    }
 }
 
 function playPuffSound() {
@@ -676,7 +679,10 @@ function releaseBalloons() {
 function sendLoveHearts() {
     const heartSymbols = ['💖', '❤️', '💝', '💕', '💗'];
     loveCount += 15;
-    document.getElementById('love-count').innerText = loveCount;
+    const loveCountEl = document.getElementById('love-count');
+    if (loveCountEl) {
+        loveCountEl.innerText = loveCount;
+    }
 
     for (let i = 0; i < 15; i++) {
         setTimeout(() => {
