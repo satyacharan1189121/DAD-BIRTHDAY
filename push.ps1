@@ -22,6 +22,19 @@ try {
         exit
     }
 
+    # Check if music.mp3 is already downloaded
+    if (-not (Test-Path "music.mp3")) {
+        Write-Host "`nDownloading high-quality background music..." -ForegroundColor Green
+        try {
+            Invoke-WebRequest -Uri "https://www.chosic.com/wp-content/uploads/2021/09/Happy-Birthday-To-You-Piano-Version.mp3" -OutFile "music.mp3" -UserAgent "Mozilla/5.0"
+            Write-Host "   (Music downloaded successfully!)" -ForegroundColor Yellow
+        } catch {
+            Write-Host "   (Warning: Could not download music. You can download and place a 'music.mp3' manually.)" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "`nBackground music 'music.mp3' already present." -ForegroundColor Yellow
+    }
+
     Write-Host "`n1. Initializing Git repository..." -ForegroundColor Green
     if (-not (Test-Path .git)) {
         git init

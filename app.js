@@ -151,74 +151,48 @@ function handleEnvelopeOpening() {
 /* -------------------------------------------------------------
    WEB AUDIO API SYNTHESIZED MUSIC BOX
    ------------------------------------------------------------- */
+let bgMusic = null;
+
 function initAudioContext() {
     if (audioCtx) return;
     
-    // Create AudioContext (supporting vendor prefixes)
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    audioCtx = new AudioContextClass();
+    try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+            audioCtx = new AudioContextClass();
+        }
+    } catch(e) {
+        console.warn("Web Audio API not supported on this browser.");
+    }
 
-    // Create a sweet high-quality delay effect to sound like a music box
-    delayNode = audioCtx.createDelay(2.0);
-    const feedbackNode = audioCtx.createGain();
-    
-    // 3/8 note delay at 110bpm is ~409ms
-    delayNode.delayTime.value = 0.409; 
-    feedbackNode.gain.value = 0.35; // Soft feedback loop
-
-    outputGainNode = audioCtx.createGain();
-    outputGainNode.gain.value = 0.15; // Set music volume soft
-
-    // Wire: Synth -> outputGainNode -> destination
-    // Synth -> delayNode -> feedbackNode -> delayNode
-    // delayNode -> outputGainNode
-    delayNode.connect(feedbackNode);
-    feedbackNode.connect(delayNode);
-    delayNode.connect(outputGainNode);
-    outputGainNode.connect(audioCtx.destination);
+    // Load background music file
+    bgMusic = new Audio('music.mp3');
+    bgMusic.loop = true;
+    bgMusic.volume = 0.35;
 }
-
-// Melody definitions: { note, dur: beats }
-// Happy Birthday Melody in F Major (3/4 Waltz)
-const melodyNotes = [
-    { note: "C4", dur: 0.75 }, { note: "C4", dur: 0.25 }, { note: "D4", dur: 1 }, { note: "C4", dur: 1 }, { note: "F4", dur: 1 }, { note: "E4", dur: 2 },
-    { note: "C4", dur: 0.75 }, { note: "C4", dur: 0.25 }, { note: "D4", dur: 1 }, { note: "C4", dur: 1 }, { note: "G4", dur: 1 }, { note: "F4", dur: 2 },
-    { note: "C4", dur: 0.75 }, { note: "C4", dur: 0.25 }, { note: "C5", dur: 1 }, { note: "A4", dur: 1 }, { note: "F4", dur: 1 }, { note: "E4", dur: 1 }, { note: "D4", dur: 2 },
-    { note: "Bb4", dur: 0.75 }, { note: "Bb4", dur: 0.25 }, { note: "A4", dur: 1 }, { note: "F4", dur: 1 }, { note: "G4", dur: 1 }, { note: "F4", dur: 2 }
-];
-
-const noteFreqs = {
-    "C4": 261.63, "D4": 293.66, "E4": 329.63, "F4": 349.23, "G4": 392.00, "A4": 440.00, "Bb4": 466.16, "C5": 523.25
-};
 
 function playNote(freq, startTime, duration) {
     if (!audioCtx) return;
 
-    // Create oscillator and envelope gain
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
 
-    // Use Triangle wave mixed with a bit of Sine to emulate music box tines
-    osc.type = 'triangle';
-    
-    // Set frequency
+    osc.type = 'sine';
     osc.frequency.setValueAtTime(freq, startTime);
 
-    // Apply envelope for plucking sound: Instant attack, long exponential decay
     gain.gain.setValueAtTime(0, startTime);
-    gain.gain.linearRampToValueAtTime(0.8, startTime + 0.01);
+    gain.gain.linearRampToValueAtTime(0.2, startTime + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration - 0.05);
 
     osc.connect(gain);
-    gain.connect(outputGainNode);
-    // Connect to spatial delay node
-    gain.connect(delayNode);
+    gain.connect(audioCtx.destination);
 
     osc.start(startTime);
     osc.stop(startTime + duration);
 }
 
 function playChime() {
+    initAudioContext();
     if (!audioCtx) return;
     const now = audioCtx.currentTime;
     const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
@@ -230,24 +204,30 @@ function playChime() {
 function startMusic() {
     if (musicPlaying) return;
     
+    initAudioContext();
     if (audioCtx && audioCtx.state === 'suspended') {
         audioCtx.resume();
     }
-    
-    musicPlaying = true;
-    currentNoteIndex = 0;
-    
-    document.getElementById('vinyl-record').classList.add('playing');
-    document.querySelector('.icon-play').classList.add('hidden');
-    document.querySelector('.icon-pause').classList.remove('hidden');
 
-    scheduler();
+    if (bgMusic) {
+        bgMusic.play().then(() => {
+            musicPlaying = true;
+            document.getElementById('vinyl-record').classList.add('playing');
+            document.querySelector('.icon-play').classList.add('hidden');
+            document.querySelector('.icon-pause').classList.remove('hidden');
+        }).catch(err => {
+            console.warn("Autoplay blocked: user interaction required.");
+        });
+    }
 }
 
 function stopMusic() {
     musicPlaying = false;
-    clearTimeout(synthTimer);
+    if (bgMusic) {
+        bgMusic.pause();
+    }
     
+    document.getElementById('vinyl-record').classList.remove('reverse');
     document.getElementById('vinyl-record').classList.remove('playing');
     document.querySelector('.icon-play').classList.remove('hidden');
     document.querySelector('.icon-pause').classList.add('hidden');
@@ -260,37 +240,6 @@ function toggleMusic() {
     } else {
         startMusic();
     }
-}
-
-// Simple scheduler for notes
-function scheduler() {
-    if (!musicPlaying || !audioCtx) return;
-
-    const beatDuration = 60 / CONFIG.bpm; // Duration of one beat in seconds
-    const currentNote = melodyNotes[currentNoteIndex];
-    const duration = currentNote.dur * beatDuration;
-
-    const freq = noteFreqs[currentNote.note];
-    const playTime = audioCtx.currentTime + 0.05;
-
-    // Play melody note
-    playNote(freq, playTime, duration);
-
-    // Dynamic accompaniment waltz beat (Soft bass note on 1, chord on 2 and 3)
-    const beatIndex = currentNoteIndex % 6;
-    if (beatIndex === 0) {
-        // Root F3 (bass) on measure start
-        playNote(174.61, playTime, beatDuration * 1.5);
-    } else if (beatIndex === 2 || beatIndex === 4) {
-        // Soft arpeggiated F chord (A3, C4)
-        playNote(220.00, playTime, beatDuration * 0.8);
-        playNote(261.63, playTime + 0.05, beatDuration * 0.8);
-    }
-
-    currentNoteIndex = (currentNoteIndex + 1) % melodyNotes.length;
-
-    // Schedule next note trigger
-    synthTimer = setTimeout(scheduler, duration * 1000);
 }
 
 /* -------------------------------------------------------------
@@ -811,6 +760,7 @@ function saveAllCustomizations() {
     customizations.title = document.getElementById('wish-main-title').innerText.trim();
     customizations.subtitle = document.getElementById('wish-subtitle').innerText.trim();
     customizations.message = document.getElementById('personal-message').innerText.trim();
+    customizations.targetLink = document.getElementById('target-link-display').innerText.trim();
 
     // 2. Fetch gallery texts
     for (let i = 1; i <= 4; i++) {
@@ -845,6 +795,10 @@ function loadCustomizations() {
         document.getElementById('wish-main-title').innerText = customizations.title;
         document.getElementById('wish-subtitle').innerText = customizations.subtitle;
         document.getElementById('personal-message').innerText = customizations.message;
+        
+        if (customizations.targetLink) {
+            document.getElementById('target-link-display').innerText = customizations.targetLink;
+        }
 
         // Apply gallery content
         for (let i = 1; i <= 4; i++) {
