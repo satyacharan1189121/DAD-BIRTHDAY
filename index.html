@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, Dad! | A Magical Wish</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Premium Fonts: Playfair Display for headers, Great Vibes for handwritten text, Inter for UI -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Sparkle canvas for background particle effects -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Confetti canvas for celebrations -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- 1. LANDING ENVELOPE SCREEN -->
+    <div id="landing-screen" class="screen active">
+        <div class="stars-container"></div>
+        <div class="envelope-wrapper">
+            <div class="envelope" id="envelope">
+                <div class="flap"></div>
+                <div class="pocket"></div>
+                <div class="letter">
+                    <div class="letter-content">
+                        <span class="letter-stamp">✨</span>
+                        <h3>To My Dearest Dad</h3>
+                        <p class="handwritten">Inside this card lies a magical wish crafted just for you. Click below to
+                            open it...</p>
+                    </div>
+                </div>
+            </div>
+            <button id="open-btn" class="btn btn-primary btn-glow">Open Invitation</button>
+        </div>
+    </div>
+
+    <!-- 2. MAIN WISH DASHBOARD -->
+    <div id="main-dashboard" class="screen">
+        <!-- Floating Navigation & Music Player -->
+        <header class="navbar">
+            <div class="nav-logo">✨ Dad's Special Day</div>
+            <div class="player-container">
+                <div class="vinyl-record" id="vinyl-record">
+                    <div class="vinyl-center"></div>
+                </div>
+                <button id="music-btn" class="btn btn-icon" title="Toggle Music">
+                    <span class="icon-play">▶️</span>
+                    <span class="icon-pause hidden">⏸️</span>
+                </button>
+                <span class="music-label">Synthesized Birthday Waltz</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <!-- Hero Wishing Card -->
+            <section class="hero-section card glass tilt-3d">
+                <div class="hero-decorations">
+                    <span class="star-sparkle top-left">✦</span>
+                    <span class="star-sparkle top-right">✦</span>
+                    <span class="star-sparkle bottom-left">✦</span>
+                    <span class="star-sparkle bottom-right">✦</span>
+                </div>
+                <h1 class="wish-title animate-glow pop-3d-z-lg" id="wish-main-title" data-editable="title">Happy Birthday, Dad!</h1>
+                <p class="wish-subtitle handwritten pop-3d-z" id="wish-subtitle" data-editable="subtitle">To the man who built our world with love, strength, and guidance.</p>
+                <div class="divider gold-gradient-bg"></div>
+                <div class="personal-message pop-3d-z" id="personal-message" data-editable="message">
+                    To the world's best father—thank you for your endless guidance, love, and support. Wishing you a year ahead filled with happiness, good health, and laughter. Happy Birthday, Dad!
+                </div>
+            </section>
+
+            <!-- Interactive Cake & Wishes Section -->
+            <section class="interactive-grid">
+                <!-- Interactive 3D Cake Card -->
+                <div class="card glass interactive-card cake-card tilt-3d">
+                    <h2 class="section-title">Make a Wish & Blow Candles 🎂</h2>
+                    <p class="card-desc">Click the candles to blow them out. Once all candles are extinguished, cut the cake!</p>
+
+                    <div class="cake-container pop-3d-z">
+                        <!-- Visual knife element -->
+                        <div id="cake-knife" class="cake-knife">🔪</div>
+                        
+                        <div class="cake" id="cake">
+                            <!-- Cake Slice that slides out -->
+                            <div class="cake-slice" id="cake-slice">
+                                <div class="slice-layer slice-layer-top"></div>
+                                <div class="slice-layer slice-layer-middle"></div>
+                                <div class="slice-layer slice-layer-bottom"></div>
+                            </div>
+                            
+                            <!-- Candle flames & candles -->
+                            <div class="candles">
+                                <div class="candle active" data-id="1">
+                                    <div class="flame"></div>
+                                </div>
+                                <div class="candle active" data-id="2">
+                                    <div class="flame"></div>
+                                </div>
+                                <div class="candle active" data-id="3">
+                                    <div class="flame"></div>
+                                </div>
+                                <div class="candle active" data-id="4">
+                                    <div class="flame"></div>
+                                </div>
+                                <div class="candle active" data-id="5">
+                                    <div class="flame"></div>
+                                </div>
+                            </div>
+                            <!-- Cake Layers -->
+                            <div class="layer layer-top"></div>
+                            <div class="layer layer-middle"></div>
+                            <div class="layer layer-bottom"></div>
+                        </div>
+                    </div>
+
+                    <div class="cake-controls">
+                        <button id="blow-btn" class="btn btn-secondary">🌬️ Blow All Candles</button>
+                        <button id="cut-btn" class="btn btn-primary hidden">🔪 Cut the Cake</button>
+                        <button id="reset-candles-btn" class="btn btn-text hidden">🕯️ Reset Cake</button>
+                    </div>
+                </div>
+
+                <!-- Fun Interactive Delighters -->
+                <div class="card glass interactive-card action-card tilt-3d">
+                    <h2 class="section-title">Send Celebrations 🎉</h2>
+                    <p class="card-desc">Trigger interactive effects to fill the screen with joy!</p>
+                    <div class="action-buttons pop-3d-z">
+                        <button id="balloon-btn" class="btn btn-glow-pink">🎈 Release Balloons</button>
+                        <button id="confetti-btn" class="btn btn-glow-gold">✨ Blast Confetti</button>
+                        <button id="love-btn" class="btn btn-glow-red">💖 Send Love Hearts</button>
+                    </div>
+                    <div class="fun-stats">
+                        <div class="stat-box">
+                            <span class="stat-num" id="candles-blown-count">0/5</span>
+                            <span class="stat-label">Candles Extinguished</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num" id="love-count">0</span>
+                            <span class="stat-label">Hearts Sent</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Memory Lane Polaroid Gallery -->
+            <section class="gallery-section">
+                <div class="gallery-header">
+                    <h2 class="section-title animate-glow">Dad's Memory Lane 📸</h2>
+                    <p class="gallery-desc">Four virtues of an amazing father</p>
+                </div>
+                <div class="gallery-grid">
+                    <!-- Polaroid Card 1: The Guide -->
+                    <div class="polaroid-card" data-card-id="1">
+                        <div class="polaroid-inner">
+                            <div class="polaroid-image-container">
+                                <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=600"
+                                    alt="The Guide" class="polaroid-img" id="gallery-img-1" crossorigin="anonymous">
+                                <div class="image-overlay">
+                                    <span class="edit-overlay-btn">📷 Change Photo</span>
+                                    <input type="file" accept="image/*" class="image-uploader-input" data-target="1">
+                                </div>
+                            </div>
+                            <div class="polaroid-caption">
+                                <h3 class="polaroid-title" id="gallery-title-1" data-editable="gallery-title">The Guide
+                                </h3>
+                                <p class="polaroid-text" id="gallery-desc-1" data-editable="gallery-desc">For showing
+                                    the path when the world seemed dark, guiding with patience and endless wisdom.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Polaroid Card 2: The Protector -->
+                    <div class="polaroid-card" data-card-id="2">
+                        <div class="polaroid-inner">
+                            <div class="polaroid-image-container">
+                                <img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&q=80&w=600"
+                                    alt="The Protector" class="polaroid-img" id="gallery-img-2" crossorigin="anonymous">
+                                <div class="image-overlay">
+                                    <span class="edit-overlay-btn">📷 Change Photo</span>
+                                    <input type="file" accept="image/*" class="image-uploader-input" data-target="2">
+                                </div>
+                            </div>
+                            <div class="polaroid-caption">
+                                <h3 class="polaroid-title" id="gallery-title-2" data-editable="gallery-title">The
+                                    Protector</h3>
+                                <p class="polaroid-text" id="gallery-desc-2" data-editable="gallery-desc">A shield
+                                    against life's storms, standing strong and keeping us safe in a warm embrace.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Polaroid Card 3: The Mentor -->
+                    <div class="polaroid-card" data-card-id="3">
+                        <div class="polaroid-inner">
+                            <div class="polaroid-image-container">
+                                <img src="https://images.unsplash.com/photo-1488998460677-94aea064d115?auto=format&fit=crop&q=80&w=600"
+                                    alt="The Mentor" class="polaroid-img" id="gallery-img-3" crossorigin="anonymous">
+                                <div class="image-overlay">
+                                    <span class="edit-overlay-btn">📷 Change Photo</span>
+                                    <input type="file" accept="image/*" class="image-uploader-input" data-target="3">
+                                </div>
+                            </div>
+                            <div class="polaroid-caption">
+                                <h3 class="polaroid-title" id="gallery-title-3" data-editable="gallery-title">The Mentor
+                                </h3>
+                                <p class="polaroid-text" id="gallery-desc-3" data-editable="gallery-desc">Teaching
+                                    life's greatest lessons not by words, but by the beautiful way you lead by example.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Polaroid Card 4: The Hero -->
+                    <div class="polaroid-card" data-card-id="4">
+                        <div class="polaroid-inner">
+                            <div class="polaroid-image-container">
+                                <img src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&q=80&w=600"
+                                    alt="The Hero" class="polaroid-img" id="gallery-img-4" crossorigin="anonymous">
+                                <div class="image-overlay">
+                                    <span class="edit-overlay-btn">📷 Change Photo</span>
+                                    <input type="file" accept="image/*" class="image-uploader-input" data-target="4">
+                                </div>
+                            </div>
+                            <div class="polaroid-caption">
+                                <h3 class="polaroid-title" id="gallery-title-4" data-editable="gallery-title">The Hero
+                                </h3>
+                                <p class="polaroid-text" id="gallery-desc-4" data-editable="gallery-desc">No cape
+                                    needed. You are, and will always be, my absolute favorite superhero.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <p>Made with ❤️ for the world's best Dad</p>
+        </footer>
+    </div>
+
+
+
+    <!-- Audio Element fallback for user interaction warning -->
+    <div id="audio-toast" class="toast hidden">
+        🔊 Tap anywhere to enable sound effects & music!
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
