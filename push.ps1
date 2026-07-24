@@ -5,14 +5,9 @@ Write-Host "--------------------------------------------------" -ForegroundColor
 Write-Host "🚀 GitHub Push Helper for Dad's Birthday Wish Card" -ForegroundColor Cyan
 Write-Host "--------------------------------------------------" -ForegroundColor Cyan
 
-# Prompt for repository link
-$repoUrl = Read-Host -Prompt 'Please paste your GitHub Repository URL (e.g., https://github.com/username/repo.git)'
-
-if (-not $repoUrl) {
-    Write-Host "❌ Error: No repository URL provided. Aborting." -ForegroundColor Red
-    Read-Host -Prompt "Press Enter to close"
-    exit
-}
+# Hardcoded repository URL to avoid pasting issues
+$repoUrl = "https://github.com/satyacharan1189121/DAD-BIRTHDAY.git"
+Write-Host "Configured Repository: $repoUrl" -ForegroundColor Yellow
 
 try {
     # Check if git is installed
@@ -34,6 +29,19 @@ try {
     } else {
         Write-Host "`nBackground music 'music.mp3' already present." -ForegroundColor Yellow
     }
+
+    # Copy user-attached images from IDE brain folder to workspace
+    Write-Host "`nSyncing user-attached photos..." -ForegroundColor Green
+    $brainDir = "C:\Users\Sathya\.gemini\antigravity-ide\brain\28cee689-2b25-475e-8cd3-443f84a6572e"
+    $img1 = Join-Path $brainDir ".tempmediaStorage\media_28cee689-2b25-475e-8cd3-443f84a6572e_1784859962836.jpg"
+    $img2 = Join-Path $brainDir "media__1784863123701.jpg"
+    $img3 = Join-Path $brainDir "media__1784863132210.jpg"
+    $img4 = Join-Path $brainDir "media__1784863144287.jpg"
+
+    if (Test-Path $img1) { Copy-Item $img1 "photo1.jpg" -Force; Write-Host "   (photo1.jpg synced)" -ForegroundColor Yellow }
+    if (Test-Path $img2) { Copy-Item $img2 "photo2.jpg" -Force; Write-Host "   (photo2.jpg synced)" -ForegroundColor Yellow }
+    if (Test-Path $img3) { Copy-Item $img3 "photo3.jpg" -Force; Write-Host "   (photo3.jpg synced)" -ForegroundColor Yellow }
+    if (Test-Path $img4) { Copy-Item $img4 "photo4.jpg" -Force; Write-Host "   (photo4.jpg synced)" -ForegroundColor Yellow }
 
     Write-Host "`n1. Initializing Git repository..." -ForegroundColor Green
     if (-not (Test-Path .git)) {
