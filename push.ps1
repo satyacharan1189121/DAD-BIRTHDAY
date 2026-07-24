@@ -57,7 +57,7 @@ try {
     git push -u origin main -f
 
     Write-Host "`n✨ Success! Your code is now on GitHub!" -ForegroundColor Green
-    Write-Host "Next Step: Go to Vercel.com, import this repository, and click 'Deploy'!" -ForegroundColor Gold
+    Write-Host "Next Step: Go to Vercel.com, import this repository, and click 'Deploy'!" -ForegroundColor Yellow
 
 } catch {
     Write-Host "`n❌ An error occurred during git operations: $_" -ForegroundColor Red
