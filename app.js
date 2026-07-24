@@ -6,10 +6,10 @@ const CONFIG = {
     candleCount: 5,
     colors: ['#FFE066', '#FF8DA1', '#8A2BE2', '#FF4B72', '#00F0FF', '#D4AF37'],
     defaultImages: {
-        1: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=600',
-        2: 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&q=80&w=600',
-        3: 'https://images.unsplash.com/photo-1488998460677-94aea064d115?auto=format&fit=crop&q=80&w=600',
-        4: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&q=80&w=600'
+        1: 'photo1.jpg',
+        2: 'photo2.jpg',
+        3: 'photo3.jpg',
+        4: 'photo4.jpg'
     }
 };
 
